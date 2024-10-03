@@ -8,17 +8,17 @@ import org.example.javapractice.Interface.GetInformation;
 
 import java.util.Map;
 
-@Menu(name = "CaffeAmericano", price = 5500)
-@Drink(isCold = false, size = "Venti", ml = 591)
-@NutritionInformation(kcal = 25, sodium = 10, saturatedFattyAcid = 0, sugar = 0, protein = 1, caffeine = 300)
+@Menu(name = "IcedFlatWhite", price = 6100)
+@Drink(isCold = true, size = "Grande", ml = 473)
+@NutritionInformation(kcal = 165, sodium = 120, saturatedFattyAcid = 4.7, sugar = 12, protein = 8, caffeine = 195)
 @Espresso
-public class VentiHotCaffeAmericano implements GetInformation {
+public class GrandeIcedFlatWhite implements GetInformation {
 
-    public VentiHotCaffeAmericano() {
+    public GrandeIcedFlatWhite() {
     }
 
     public Map<String, Object> getInformationMap() {
-        getInformation(VentiHotCaffeAmericano.class);
+        getInformation(GrandeIcedFlatWhite.class);
         return informationMap;
     }
 }

@@ -7,10 +7,10 @@ import java.lang.annotation.*;
 @Inherited
 public @interface NutritionInformation {
 
-    int kcal();
-    int sodium();
-    int saturatedFattyAcid();
-    int sugar();
-    int protein();
-    int caffeine();
+    double kcal();
+    double sodium();
+    double saturatedFattyAcid();
+    double sugar();
+    double protein();
+    double caffeine();
 }

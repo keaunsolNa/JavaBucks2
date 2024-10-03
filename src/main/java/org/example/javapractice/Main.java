@@ -1,30 +1,37 @@
 package org.example.javapractice;
 
+import org.example.javapractice.JFrame.MainFrame;
 import org.example.javapractice.dto.Espresso.TallIcedCaffeAmericano;
 
 import java.util.Arrays;
 
 public class Main {
 
+    private static Class<?> chosenMenu;
+    private static Object chosenObject;
+
     public static void main (String[] args) {
 
+        MainFrame mainFrame = new MainFrame();
+        try
+        {
+            chosenMenu =  Class.forName("GrandeJavaChipFrappuccino");
+            chosenObject = chosenMenu.newInstance();
 
-        TallIcedCaffeAmericano tca =  new TallIcedCaffeAmericano();
+        }
+        catch (InstantiationException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IllegalAccessException e)
+        {
+            e.printStackTrace();
+        }
+        catch (ClassNotFoundException e)
+        {
+            e.printStackTrace();
+        }
 
 
-        System.out.println("INFOMAP : " + tca.getInformationMap());
-
-        Arrays.stream(TallIcedCaffeAmericano.class.getAnnotations()).forEach(f -> {
-
-            Arrays.stream(f.annotationType().getMethods()).forEach(method -> {
-
-//                System.out.println("METHOD ");
-//                System.out.println(method.getName());
-//                System.out.println(method.getDefaultValue());
-//                System.out.println(method.getModifiers());
-//                System.out.println(method.getGenericReturnType());
-            });
-
-        });
     }
 }
