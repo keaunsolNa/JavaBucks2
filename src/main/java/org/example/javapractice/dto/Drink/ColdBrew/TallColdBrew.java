@@ -1,4 +1,4 @@
-package org.example.javapractice.dto.ColdBrew;
+package org.example.javapractice.dto.Drink.ColdBrew;
 
 import org.example.javapractice.Annotation.ColdBrew;
 import org.example.javapractice.Annotation.Drink;
@@ -8,17 +8,17 @@ import org.example.javapractice.Interface.GetInformation;
 
 import java.util.Map;
 
-@Menu(name = "ColdBrew", price = 5900)
-@Drink(isCold = true, size = "Venti", ml = 591)
-@NutritionInformation(kcal = 5, sodium = 17, saturatedFattyAcid = 0, sugar = 0, protein = 0, caffeine = 250)
+@Menu(name = "ColdBrew", price = 4900)
+@Drink(isCold = true, size = "Tall", ml = 355)
+@NutritionInformation(kcal = 5, sodium = 11, saturatedFattyAcid = 0, sugar = 0, protein = 0, caffeine = 155)
 @ColdBrew
-public class VentiColdBrew implements GetInformation {
+public class TallColdBrew implements GetInformation {
 
-    public VentiColdBrew() {
+    public TallColdBrew() {
     }
 
     public Map<String, Object> getInformationMap() {
-        getInformation(VentiColdBrew.class);
+        getInformation(TallColdBrew.class);
         return informationMap;
     }
 }

@@ -1,4 +1,4 @@
-package org.example.javapractice.dto.Frappuccino;
+package org.example.javapractice.dto.Drink.Frappuccino;
 
 import org.example.javapractice.Annotation.*;
 import org.example.javapractice.Interface.GetInformation;

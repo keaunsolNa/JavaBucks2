@@ -1,4 +1,4 @@
-package org.example.javapractice.dto.ColdBrew;
+package org.example.javapractice.dto.Drink.ColdBrew;
 
 import org.example.javapractice.Annotation.*;
 import org.example.javapractice.Interface.GetInformation;
