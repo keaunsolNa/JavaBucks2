@@ -4,6 +4,7 @@ import org.example.javapractice.Annotation.Drink;
 import org.example.javapractice.Annotation.Espresso;
 import org.example.javapractice.Annotation.Menu;
 import org.example.javapractice.Annotation.NutritionInformation;
+import org.example.javapractice.dto.Drink.ColdBrew.GrandeDolceColdBrew;
 
 import java.util.Map;
 
@@ -18,8 +19,7 @@ public class GrandeFlatWhite extends FlatWhite {
     }
 
     @Override
-    public Map<String, Object> getInformationMap() {
-        getInformation(GrandeFlatWhite.class);
-        return informationMap;
+    public void getInformation(Class<?> T) {
+        super.getInformation(GrandeFlatWhite.class);
     }
 }

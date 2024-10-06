@@ -16,8 +16,7 @@ public class TallDolceColdBrew extends DolceColdBrew {
     }
 
     @Override
-    public Map<String, Object> getInformationMap() {
-        getInformation(TallDolceColdBrew.class);
-        return informationMap;
+    public void getInformation(Class<?> T) {
+        super.getInformation(TallDolceColdBrew.class);
     }
 }

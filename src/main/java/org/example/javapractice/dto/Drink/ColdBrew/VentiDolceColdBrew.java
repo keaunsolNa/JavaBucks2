@@ -16,8 +16,7 @@ public class VentiDolceColdBrew extends DolceColdBrew {
     }
 
     @Override
-    public Map<String, Object> getInformationMap() {
-        getInformation(VentiDolceColdBrew.class);
-        return informationMap;
+    public void getInformation(Class<?> T) {
+        super.getInformation(VentiDolceColdBrew.class);
     }
 }

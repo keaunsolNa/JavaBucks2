@@ -3,6 +3,7 @@ package org.example.javapractice.dto.Drink.Espresso;
 import org.example.javapractice.Annotation.Drink;
 import org.example.javapractice.Annotation.Menu;
 import org.example.javapractice.Annotation.NutritionInformation;
+import org.example.javapractice.dto.Drink.ColdBrew.GrandeDolceColdBrew;
 
 import java.util.Map;
 
@@ -16,8 +17,7 @@ public class GrandeCaffeAmericano extends CaffeAmericano {
     }
 
     @Override
-    public Map<String, Object> getInformationMap() {
-        getInformation(GrandeCaffeAmericano.class);
-        return informationMap;
+    public void getInformation(Class<?> T) {
+        super.getInformation(GrandeCaffeAmericano.class);
     }
 }

@@ -5,6 +5,7 @@ import org.example.javapractice.Annotation.Espresso;
 import org.example.javapractice.Annotation.Menu;
 import org.example.javapractice.Annotation.NutritionInformation;
 import org.example.javapractice.Interface.GetInformation;
+import org.example.javapractice.dto.Drink.ColdBrew.GrandeDolceColdBrew;
 
 import java.util.Map;
 
@@ -12,13 +13,14 @@ import java.util.Map;
 @Drink(isCold = false, size = "Tall", ml = 355)
 @NutritionInformation(kcal = 170, sodium = 130, saturatedFattyAcid = 5, sugar = 13, protein = 8, caffeine = 130)
 @Espresso
-public class TallFlatWhite implements GetInformation {
+public class TallFlatWhite extends FlatWhite {
 
     public TallFlatWhite() {
+        super();
     }
 
-    public Map<String, Object> getInformationMap() {
-        getInformation(TallFlatWhite.class);
-        return informationMap;
+    @Override
+    public void getInformation(Class<?> T) {
+        super.getInformation(TallFlatWhite.class);
     }
 }

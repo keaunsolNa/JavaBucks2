@@ -25,6 +25,9 @@ public class CommonModule {
 
         List<String> list = new ArrayList<>();
         File directory = new File(dirPath);
+        Map<String, Map<String, List<String>>> map = new HashMap<>();
+        // DolceColdBrew, [TallDolceCodeBrew, GrandeDolceCodeBrew, VentiDolceCodeBrew]
+        Map<String, List<String>> innerMap = new HashMap<>();
 
         if (directory.exists())
         {
@@ -47,6 +50,11 @@ public class CommonModule {
                         {
                             Class<?> dynamicClass = Class.forName(pkgPath + "." + className);
                             if (dynamicClass.getSuperclass().getSuperclass() != Object.class)
+                            {
+                                list.add(className);
+                                innerMap.put(className, new ArrayList<>());
+                            }
+                            else
                             {
                                 list.add(className);
                             }
