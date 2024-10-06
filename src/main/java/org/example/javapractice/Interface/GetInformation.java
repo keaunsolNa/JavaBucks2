@@ -1,5 +1,9 @@
 package org.example.javapractice.Interface;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.example.javapractice.CommonModule.CommonModule;
+
 import java.lang.annotation.*;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -8,6 +12,7 @@ import java.util.Map;
 
 public interface GetInformation {
 
+    Logger log = LogManager.getLogger(CommonModule.class);
     Map<String, Object> informationMap = new HashMap<>();
     default void getInformation(Class<?> T) {
 
@@ -26,7 +31,7 @@ public interface GetInformation {
 
                 catch (Exception e)
                 {
-                    e.printStackTrace();
+                    log.debug(e.getMessage());
                 }
             }
         });

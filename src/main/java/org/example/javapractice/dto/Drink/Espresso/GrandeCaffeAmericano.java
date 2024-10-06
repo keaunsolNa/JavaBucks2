@@ -1,22 +1,21 @@
 package org.example.javapractice.dto.Drink.Espresso;
 
 import org.example.javapractice.Annotation.Drink;
-import org.example.javapractice.Annotation.Espresso;
 import org.example.javapractice.Annotation.Menu;
 import org.example.javapractice.Annotation.NutritionInformation;
-import org.example.javapractice.Interface.GetInformation;
 
 import java.util.Map;
 
 @Menu(name = "CaffeAmericano", price = 5000)
 @Drink(isCold = false, size = "Grande", ml = 473)
 @NutritionInformation(kcal = 15, sodium = 10, saturatedFattyAcid = 0, sugar = 0, protein = 1, caffeine = 225)
-@Espresso
-public class GrandeCaffeAmericano implements GetInformation {
+public class GrandeCaffeAmericano extends CaffeAmericano {
 
     public GrandeCaffeAmericano() {
+        super();
     }
 
+    @Override
     public Map<String, Object> getInformationMap() {
         getInformation(GrandeCaffeAmericano.class);
         return informationMap;

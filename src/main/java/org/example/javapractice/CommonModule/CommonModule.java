@@ -20,12 +20,11 @@ public class CommonModule {
 
     }
 
-    public List<String> getPackageNameFromPackage(String source, boolean isClass)
+    public List<String> getPackageNameFromPackage(String dirPath, String pkgPath, boolean isClass)
     {
 
-        log.info("getPackageNameFromPackage");
         List<String> list = new ArrayList<>();
-        File directory = new File(source);
+        File directory = new File(dirPath);
 
         if (directory.exists())
         {
@@ -34,6 +33,8 @@ public class CommonModule {
             {
                 for (File file : files)
                 {
+
+                    String className = file.getName().substring(0, file.getName().length() - 5);
                     if (!isClass && file.isDirectory())
                     {
                         list.add(file.getName());
@@ -41,12 +42,26 @@ public class CommonModule {
 
                     else if (isClass && file.isFile())
                     {
-                        list.add(file.getName().substring(0, file.getName().length() - 5));
+
+                        try
+                        {
+                            Class<?> dynamicClass = Class.forName(pkgPath + "." + className);
+                            if (dynamicClass.getSuperclass().getSuperclass() != Object.class)
+                            {
+                                list.add(className);
+                            }
+
+                        }
+                        catch (Exception e)
+                        {
+                            log.debug(e.getMessage());
+                        }
                     }
                 }
             }
         }
 
+        System.out.println(list);
         return list;
     }
 
@@ -54,7 +69,6 @@ public class CommonModule {
     public Map<String, Object> getInfoMapFromDynamicClass (String className)
     {
 
-        log.info("getInfoMapFromDynamicClass");
         Map<String, Object> InformationMap = new HashMap<>();
         try
         {

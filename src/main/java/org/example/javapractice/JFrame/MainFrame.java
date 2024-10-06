@@ -1,7 +1,5 @@
 package org.example.javapractice.JFrame;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.example.javapractice.CommonModule.CommonModule;
 
 import javax.swing.*;
@@ -13,7 +11,6 @@ import java.util.Map;
 
 public class MainFrame extends JFrame implements ActionListener {
 
-    private static final Logger log = LogManager.getLogger(MainFrame.class);
     private static final String PATH = "org.example.javapractice.dto";
     private static final String DTO_PATH = "src/main/java/org/example/javapractice/dto/";
     private static final StringBuilder pkgPath = new StringBuilder();
@@ -23,8 +20,7 @@ public class MainFrame extends JFrame implements ActionListener {
     // 최초 Init 시 메인 프레임
     public MainFrame() {
 
-        log.info("MAINFRAME START");
-        setSize(150, 500);
+        setSize(500, 500);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
@@ -57,6 +53,23 @@ public class MainFrame extends JFrame implements ActionListener {
 
         add(mainPanel, BorderLayout.CENTER);
 
+        String[] btn = new String[] { "Hot", "Cold", "Tall", "Grande", "Venti"};
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+
+        for (String str : btn)
+        {
+
+            JButton tempBtn = new JButton(str);
+            tempBtn.setActionCommand(str);
+            tempBtn.addActionListener(this);
+            tempBtn.setEnabled(false);
+
+            bottomPanel.add(tempBtn);
+        }
+
+
+        add(bottomPanel, BorderLayout.SOUTH);
+
         setLocationRelativeTo(null);
 
         prevPanel = mainPanel;
@@ -68,14 +81,13 @@ public class MainFrame extends JFrame implements ActionListener {
 
         String command = e.getActionCommand();
 
-        log.info(command);
         switch (command)
         {
 
             case "Drink" :
             case "Food" :
             case "Merchandise" :
-                List<String> directoryList = cm.getPackageNameFromPackage(DTO_PATH + command, false);
+                List<String> directoryList = cm.getPackageNameFromPackage(DTO_PATH + command, PATH + pkgPath + "." + command, false);
                 updatePanel(directoryList);
                 pkgPath.append(".").append(command);
                 break;
@@ -83,7 +95,7 @@ public class MainFrame extends JFrame implements ActionListener {
             case "ColdBrew" :
             case "Espresso" :
             case "Frappuccino" :
-                List<String> classList = cm.getPackageNameFromPackage(DTO_PATH + "DRINK/" + command, true);
+                List<String> classList = cm.getPackageNameFromPackage(DTO_PATH + "DRINK/" + command, PATH + pkgPath + "." + command, true);
                 updatePanel(classList);
                 pkgPath.append(".").append(command);
                 break;
@@ -97,7 +109,6 @@ public class MainFrame extends JFrame implements ActionListener {
             default: Map<String, Object> map = cm.getInfoMapFromDynamicClass(PATH + pkgPath + "." + command);
                 System.out.println(map);
         }
-        System.out.println(PATH + pkgPath);
     }
 
     // 버튼 선택 시 패널 업데이트
@@ -129,8 +140,6 @@ public class MainFrame extends JFrame implements ActionListener {
     // 뒤로가기 버튼
     private void goBackPanel()
     {
-        log.info("GoBack");
-
         // 기존 패널을 제거하고 새 패널로 교체
         getContentPane().remove(mainPanel);     // 기존 메인 패널 제거
         mainPanel = prevPanel;                  // 새로운 패널을 메인 패널로 교체
