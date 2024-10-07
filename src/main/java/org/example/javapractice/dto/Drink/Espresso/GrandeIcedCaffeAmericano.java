@@ -9,7 +9,7 @@ import org.example.javapractice.Annotation.NutritionInformation;
 @Drink(isCold = true, size = "Grande", ml = 473)
 @NutritionInformation(kcal = 15, sodium = 10, saturatedFattyAcid = 0, sugar = 0, protein = 1, caffeine = 225)
 @Espresso
-public class GrandeIcedCaffeAmericano extends IcedCaffeAmericano {
+public class GrandeIcedCaffeAmericano extends CaffeAmericano {
 
     public GrandeIcedCaffeAmericano() {
         super();
