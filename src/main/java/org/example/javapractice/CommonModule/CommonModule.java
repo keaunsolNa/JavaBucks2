@@ -26,7 +26,6 @@ public class CommonModule {
         List<String> list = new ArrayList<>();
         File directory = new File(dirPath);
 
-
         if (directory.exists())
         {
             File[] files = directory.listFiles();
@@ -49,8 +48,6 @@ public class CommonModule {
     {
 
         Map<String, List<String>> map = new HashMap<>();
-        System.out.println("IN CM : " + pkgPath);
-        System.out.println("IN CM : " + className);
 
         try
         {
@@ -90,11 +87,9 @@ public class CommonModule {
         }
         catch (Exception e)
         {
-            System.out.println(e);
             log.debug(e.getMessage());
         }
 
-        System.out.println(map);
         return map;
     }
 
