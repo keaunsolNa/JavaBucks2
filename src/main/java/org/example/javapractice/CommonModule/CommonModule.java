@@ -20,14 +20,12 @@ public class CommonModule {
 
     }
 
-    public List<String> getPackageNameFromPackage(String dirPath, String pkgPath, boolean isClass)
+    public List<String> getPackageNameFromPackage(String dirPath)
     {
 
         List<String> list = new ArrayList<>();
         File directory = new File(dirPath);
-        Map<String, Map<String, List<String>>> map = new HashMap<>();
-        // DolceColdBrew, [TallDolceCodeBrew, GrandeDolceCodeBrew, VentiDolceCodeBrew]
-        Map<String, List<String>> innerMap = new HashMap<>();
+
 
         if (directory.exists())
         {
@@ -36,41 +34,68 @@ public class CommonModule {
             {
                 for (File file : files)
                 {
-
-                    String className = file.getName().substring(0, file.getName().length() - 5);
-                    if (!isClass && file.isDirectory())
+                    if (file.isDirectory())
                     {
                         list.add(file.getName());
-                    }
-
-                    else if (isClass && file.isFile())
-                    {
-
-                        try
-                        {
-                            Class<?> dynamicClass = Class.forName(pkgPath + "." + className);
-                            if (dynamicClass.getSuperclass().getSuperclass() != Object.class)
-                            {
-                                list.add(className);
-                                innerMap.put(className, new ArrayList<>());
-                            }
-                            else
-                            {
-                                list.add(className);
-                            }
-
-                        }
-                        catch (Exception e)
-                        {
-                            log.debug(e.getMessage());
-                        }
                     }
                 }
             }
         }
 
-        System.out.println(list);
         return list;
+    }
+
+    public Map<String, List<String>> getMenuMap(String pkgPath, String className)
+    {
+
+        Map<String, List<String>> map = new HashMap<>();
+        System.out.println("IN CM : " + pkgPath);
+        System.out.println("IN CM : " + className);
+
+        try
+        {
+
+            File directory = new File(pkgPath);
+            if (directory.exists())
+            {
+                File[] files = directory.listFiles();
+                if (files != null)
+                {
+                    for (File file : files)
+                    {
+                        if (!file.isDirectory())
+                        {
+                            String fileName = file.getName().substring(0, file.getName().indexOf("."));
+                            Class<?> dynamicClass = Class.forName(className + "." + fileName);
+
+                            if (dynamicClass.getSuperclass().getSuperclass() == Object.class)
+                            {
+                                String upperClassName = dynamicClass.getSuperclass().getSimpleName();
+                                if (map.containsKey(upperClassName))
+                                {
+                                    map.get(upperClassName).add(fileName);
+                                }
+                                else
+                                {
+                                    List<String> innerList = new ArrayList<>();
+                                    innerList.add(fileName);
+                                    map.put(upperClassName, innerList);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
+            log.debug(e.getMessage());
+        }
+
+        System.out.println(map);
+        return map;
     }
 
     // Reflection 활용하여 객체의 정보를 가져오는 메서드 실행
