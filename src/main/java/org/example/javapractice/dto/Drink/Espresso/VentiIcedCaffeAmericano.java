@@ -13,7 +13,7 @@ import java.util.Map;
 @Drink(isCold = true, size = "Venti", ml = 591)
 @NutritionInformation(kcal = 25, sodium = 10, saturatedFattyAcid = 0, sugar = 0, protein = 1, caffeine = 300)
 @Espresso
-public class VentiIcedCaffeAmericano extends CaffeAmericano {
+public class VentiIcedCaffeAmericano extends IcedCaffeAmericano {
 
     public VentiIcedCaffeAmericano() {
         super();
