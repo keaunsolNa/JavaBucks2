@@ -1,10 +1,6 @@
 package org.example.javapractice.dto.Drink.Espresso;
 
 import org.example.javapractice.Annotation.*;
-import org.example.javapractice.Interface.GetInformation;
-import org.example.javapractice.dto.Drink.ColdBrew.GrandeDolceColdBrew;
-
-import java.util.Map;
 
 @Menu(name = "IcedCaffeAmericano", price = 4500)
 @Drink(isCold = true, size = "Tall", ml = 355)
