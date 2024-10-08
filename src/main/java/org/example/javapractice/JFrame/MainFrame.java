@@ -22,7 +22,8 @@ public class MainFrame extends JFrame implements ActionListener {
                                 DTO_PATH = "src/main/java/org/example/javapractice/dto/";
     private static final StringBuilder pkgPath = new StringBuilder();
     private static final CommonModule cm = new CommonModule();
-    private static List<String> nowList, menuList;
+    private static List<String> levelOneList, levelTwoList, levelThrList;
+    private static Map<String, List<String>> menuMap;
     private JPanel mainPanel, prevPanel;
     private static String chosenDtoPath;
 
@@ -54,7 +55,7 @@ public class MainFrame extends JFrame implements ActionListener {
         String[] btn = new String[] { "Drink", "Food", "Merchandise"};
         makeDefaultButton(mainPanel, btn, true);
         add(mainPanel, BorderLayout.CENTER);
-        menuList = Arrays.asList(btn);
+        levelOneList = Arrays.asList(btn);
 
         btn = new String[] {"Iced", "Hot", "Tall", "Grande", "Venti"};
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
@@ -105,32 +106,52 @@ public class MainFrame extends JFrame implements ActionListener {
         if (command.equals("GoBack"))
         {
             goBackPanel();
-            pkgPath.delete(pkgPath.lastIndexOf("."), pkgPath.length());
+            if (!pkgPath.isEmpty())
+                pkgPath.delete(pkgPath.lastIndexOf("."), pkgPath.length());
         }
 
         // Drink, Food, Merchandise 버튼 선택 시 해당 메뉴의 하위 메뉴를 가져온다.
-        else if (menuList.contains(command))
+        else if (levelOneList.contains(command))
         {
-            nowList = cm.getPackageNameFromPackage(DTO_PATH + command);
-            updatePanel(nowList);
+            levelTwoList = cm.getPackageNameFromPackage(DTO_PATH + command);
+            updatePanel(levelTwoList);
             pkgPath.append(".").append(command);
             chosenDtoPath = command + "/";
 
         }
 
-        // Drink, Food, Merchandise 버튼의 하위 버튼 선택 시 해당 버튼의 하위 메뉴 중 default 객체를 가져온다. (Size 를 제외한 원형 객체)
-        else if (nowList.contains(command))
+        /*
+            Drink, Food, Merchandise 버튼의 하위 버튼 선택 시 해당 버튼의 하위 메뉴 중 default 객체를 가져온다. (Size 를 제외한 원형 객체)
+            가져오는 방식은 Map<String, List<String>> 형태
+            Map의 key가 각 메뉴의 원형 객체가 된다.
+            원형 객체는 원형 객체를 상속받은 세부 객체가 되며, 세부 객체는 각각 Iced, Hot, Size(Tall, Grande, Venti) 등의 옵션에 따라 세부객체가 나뉜다.
+         */
+        else if (levelTwoList.contains(command))
         {
-            Map<String, List<String>> classList = cm.getMenuMap(DTO_PATH + chosenDtoPath + command, PATH + pkgPath + "." + command);
-            System.out.println(classList);
-//            updatePanel(classList);
+            menuMap = cm.getMenuMap(DTO_PATH + chosenDtoPath + command, PATH + pkgPath + "." + command);
+            System.out.println(menuMap);
+
+            levelThrList = menuMap.keySet().stream().toList();
+            updatePanel(levelThrList);
             pkgPath.append(".").append(command);
+        }
+
+        else if (levelThrList.contains(command))
+        {
+
+            List<String> list = menuMap.get(command);
+            updatePanel(list);
+            pkgPath.append(".").append(command);
+
+
         }
 
         // 메뉴 선택 시 해당 메뉴의 정보를 가져온다.
 //            default: Map<String, Object> map = cm.getInfoMapFromDynamicClass(PATH + pkgPath + "." + command);
 //                System.out.println(map);
 //        }
+
+        System.out.println("PKG_PATH : " + pkgPath);
     }
 
     /**
