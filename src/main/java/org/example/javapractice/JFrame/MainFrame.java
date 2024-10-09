@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 /**
  * MainFrame 을 만들고, 버튼에 대한 Action 을 정의하는 클래스
@@ -22,10 +23,13 @@ public class MainFrame extends JFrame implements ActionListener {
                                 DTO_PATH = "src/main/java/org/example/javapractice/dto/";
     private static final StringBuilder pkgPath = new StringBuilder();
     private static final CommonModule cm = new CommonModule();
-    private static List<String> levelOneList, levelTwoList, levelThrList;
+    private static List<String> levelOneList, levelTwoList, levelThrList, optionList;
     private static Map<String, List<String>> menuMap;
+    private static boolean isCold = false;
+    private static int size = 1;
     private JPanel mainPanel, prevPanel;
     private static String chosenDtoPath;
+    private static Stack<String> prevMenu;
 
     // Constructor
     public MainFrame() {
@@ -58,6 +62,7 @@ public class MainFrame extends JFrame implements ActionListener {
         levelOneList = Arrays.asList(btn);
 
         btn = new String[] {"Iced", "Hot", "Tall", "Grande", "Venti"};
+        optionList = Arrays.asList(btn);
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
         makeDefaultButton(bottomPanel, btn, false);
         add(bottomPanel, BorderLayout.SOUTH);
@@ -110,6 +115,20 @@ public class MainFrame extends JFrame implements ActionListener {
                 pkgPath.delete(pkgPath.lastIndexOf("."), pkgPath.length());
         }
 
+        // Hot, Cold, Size 조정 등 옵션 선택
+        else if (optionList.contains(command))
+        {
+
+            switch (command)
+            {
+                case "Cold" : isCold = true; break;
+                case "Hot" : isCold = false; break;
+                case "Tall" : size = 1; break;
+                case "Grande" : size = 2; break;
+                case "Venti" : size = 3; break;
+            }
+        }
+
         // Drink, Food, Merchandise 버튼 선택 시 해당 메뉴의 하위 메뉴를 가져온다.
         else if (levelOneList.contains(command))
         {
@@ -134,14 +153,19 @@ public class MainFrame extends JFrame implements ActionListener {
             levelThrList = menuMap.keySet().stream().toList();
             updatePanel(levelThrList);
             pkgPath.append(".").append(command);
+            System.out.println("List : " + levelThrList);
         }
 
+        // 개별 매뉴 선택 시 들어오는 이벤트
         else if (levelThrList.contains(command))
         {
 
-            List<String> list = menuMap.get(command);
-            updatePanel(list);
-            pkgPath.append(".").append(command);
+            String menu = (size == 1 ? "Tall" : size == 2 ? "Grande" : "Venti") + (isCold ? "Iced" : "") + command;
+            String path = System.getProperty("user.dir") + "\\src\\main\\resources\\img\\" + pkgPath.toString().split("\\.")[1] + "\\" + pkgPath.toString().split("\\.")[2] + "\\" + command + ".jpg";
+
+            updateMenuPanel(path, menu);
+            System.out.println("path : " + path);
+//            pkgPath.append(".").append(command);
 
 
         }
@@ -160,7 +184,7 @@ public class MainFrame extends JFrame implements ActionListener {
      *
      * @param btnList 생성할 버튼의 리스트
      */
-    public void updatePanel(List<String> btnList) {
+    private void updatePanel(List<String> btnList) {
 
         JPanel newPanel = new JPanel();
         newPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10)); // 좌측 정렬
@@ -185,6 +209,51 @@ public class MainFrame extends JFrame implements ActionListener {
 
     }
 
+    /**
+     * 
+     * @param path : 메뉴의 이미지 주소
+     * @param menu : 메뉴의 이름
+     */
+    private void updateMenuPanel(String path, String menu)
+    {
+
+        ImageIcon icon = new ImageIcon(path);
+        JPanel newPanel = new JPanel()
+
+        {
+            public void paintComponent(Graphics g)
+            {
+                g.drawImage(icon.getImage(), 0, 0, null);
+                setOpaque(false);
+                super.paintComponent(g);
+            }
+        };
+
+        Map<String, Object> map = cm.getInfoMapFromDynamicClass(PATH + pkgPath + "." + menu);
+
+        StringBuilder sb = new StringBuilder();
+        for (String key : map.keySet())
+        {
+            sb.append("<p> ").append(key).append(" : ").append(map.get(key)).append("</p> <br />");
+        }
+
+        JLabel label = new JLabel("<html><body>" + sb + "</body></html>");
+
+        newPanel.add(label, BorderLayout.EAST);
+        newPanel.doLayout();
+        newPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 10)); // 좌측 정렬
+
+        // 기존 패널을 제거하고 새 패널로 교체
+        prevPanel = mainPanel;               // 기존 메인 패널 제거 전 이전 프레임으로 담아두기
+        getContentPane().remove(mainPanel);  // 기존 메인 패널 제거
+        mainPanel = newPanel;                // 새로운 패널을 메인 패널로 교체
+        add(mainPanel, BorderLayout.CENTER); // 새 패널을 중앙에 추가
+
+        // 레이아웃 갱신
+        revalidate();  // 레이아웃을 다시 계산
+        repaint();     // 화면을 다시 그리기
+
+    }
     /**
      * 뒤로가기 버튼.
      * 기존 패널을 제거하고 이전의 패널로 교체한다.
