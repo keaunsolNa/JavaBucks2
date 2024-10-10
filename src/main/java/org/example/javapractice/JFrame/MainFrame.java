@@ -21,15 +21,15 @@ public class MainFrame extends JFrame implements ActionListener {
     // global variable area
     private static final String PATH = "org.example.javapractice.dto",
                                 DTO_PATH = "src/main/java/org/example/javapractice/dto/";
-    private static final StringBuilder pkgPath = new StringBuilder();
-    private static final CommonModule cm = new CommonModule();
-    private static List<String> levelOneList, levelTwoList, levelThrList, optionList;
-    private static Map<String, List<String>> menuMap;
-    private static boolean isCold = false;
-    private static int size = 1;
-    private JPanel mainPanel, prevPanel;
-    private static String chosenDtoPath;
-    private static Stack<String> prevMenu;
+    private final StringBuilder pkgPath = new StringBuilder();
+    private final CommonModule cm = new CommonModule();
+    private final Stack<JPanel> prevMenu = new Stack<>();
+    private List<String> levelOneList, levelTwoList, levelThrList, optionList;
+    private Map<String, List<String>> menuMap;
+    private boolean isCold = false;
+    private int size = 1;
+    private JPanel mainPanel;
+    private String chosenDtoPath;
 
     // Constructor
     public MainFrame() {
@@ -37,7 +37,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
     /**
      *  Main method 에서 호출하는 메서드. 최초 구동 시 MainFrame 생성한다.
-     *
+     *  뒤로 가기 버튼, 초기 메뉴, 하단 옵션 선택 버튼을 통해 메인 페널을 만든다.
      */
     public void makeMainFrame()
     {
@@ -69,7 +69,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
         setLocationRelativeTo(null);
 
-        prevPanel = mainPanel;
+        prevMenu.push(mainPanel);
         setVisible(true);
     }
 
@@ -148,12 +148,10 @@ public class MainFrame extends JFrame implements ActionListener {
         else if (levelTwoList.contains(command))
         {
             menuMap = cm.getMenuMap(DTO_PATH + chosenDtoPath + command, PATH + pkgPath + "." + command);
-            System.out.println(menuMap);
 
             levelThrList = menuMap.keySet().stream().toList();
             updatePanel(levelThrList);
             pkgPath.append(".").append(command);
-            System.out.println("List : " + levelThrList);
         }
 
         // 개별 매뉴 선택 시 들어오는 이벤트
@@ -164,7 +162,6 @@ public class MainFrame extends JFrame implements ActionListener {
             String path = System.getProperty("user.dir") + "\\src\\main\\resources\\img\\" + pkgPath.toString().split("\\.")[1] + "\\" + pkgPath.toString().split("\\.")[2] + "\\" + command + ".jpg";
 
             updateMenuPanel(path, menu);
-            System.out.println("path : " + path);
 //            pkgPath.append(".").append(command);
 
 
@@ -198,10 +195,10 @@ public class MainFrame extends JFrame implements ActionListener {
         }
 
         // 기존 패널을 제거하고 새 패널로 교체
-        prevPanel = mainPanel;               // 기존 메인 패널 제거 전 이전 프레임으로 담아두기
-        getContentPane().remove(mainPanel);  // 기존 메인 패널 제거
-        mainPanel = newPanel;                // 새로운 패널을 메인 패널로 교체
-        add(mainPanel, BorderLayout.CENTER); // 새 패널을 중앙에 추가
+        prevMenu.push(mainPanel);               // 이전 프레임 Stack에 저장
+        getContentPane().remove(mainPanel);     // 메인 패널 remove
+        mainPanel = newPanel;                   // 새로운 패널을 메인 패널로 교체
+        add(mainPanel, BorderLayout.CENTER);    // 새 패널을 중앙에 추가
 
         // 레이아웃 갱신
         revalidate();  // 레이아웃을 다시 계산
@@ -244,10 +241,10 @@ public class MainFrame extends JFrame implements ActionListener {
         newPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 10)); // 좌측 정렬
 
         // 기존 패널을 제거하고 새 패널로 교체
-        prevPanel = mainPanel;               // 기존 메인 패널 제거 전 이전 프레임으로 담아두기
-        getContentPane().remove(mainPanel);  // 기존 메인 패널 제거
-        mainPanel = newPanel;                // 새로운 패널을 메인 패널로 교체
-        add(mainPanel, BorderLayout.CENTER); // 새 패널을 중앙에 추가
+        prevMenu.push(mainPanel);               // 이전 프레임 Stack에 저장
+        getContentPane().remove(mainPanel);     // 메인 패널 remove
+        mainPanel = newPanel;                   // 새로운 패널을 메인 패널로 교체
+        add(mainPanel, BorderLayout.CENTER);    // 새 패널을 중앙에 추가
 
         // 레이아웃 갱신
         revalidate();  // 레이아웃을 다시 계산
@@ -260,9 +257,16 @@ public class MainFrame extends JFrame implements ActionListener {
      */
     private void goBackPanel()
     {
+
+        // 뒤로가기 시 이전 패널이 없다면 void return
+        if (prevMenu.isEmpty())
+        {
+            return;
+        }
+
         // 기존 패널을 제거하고 새 패널로 교체
-        getContentPane().remove(mainPanel);     // 기존 메인 패널 제거
-        mainPanel = prevPanel;                  // 새로운 패널을 메인 패널로 교체
+        getContentPane().remove(mainPanel);     // 메인 패널 remove
+        mainPanel = prevMenu.pop();             // Stack에 저장된 이전 패널을 꺼내 새로운 메인 패널로 삼는다.
         add(mainPanel, BorderLayout.CENTER);    // 새 패널을 중앙에 추가
 
         // 레이아웃 갱신
