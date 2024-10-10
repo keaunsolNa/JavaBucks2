@@ -18,17 +18,16 @@ import java.util.Stack;
  */
 public class MainFrame extends JFrame implements ActionListener {
 
-    // global variable area
+    // member variable area
     private static final String PATH = "org.example.javapractice.dto",
                                 DTO_PATH = "src/main/java/org/example/javapractice/dto/";
     private final StringBuilder pkgPath = new StringBuilder();
     private final CommonModule cm = new CommonModule();
     private final Stack<JPanel> prevMenu = new Stack<>();
     private List<String> levelOneList, levelTwoList, levelThrList, optionList;
-    private Map<String, List<String>> menuMap;
-    private boolean isCold = false;
+    private boolean isCold = false, isMenu = false;
     private int size = 1;
-    private JPanel mainPanel;
+    private JPanel mainPanel, bottomPanel;
     private String chosenDtoPath;
 
     // Constructor
@@ -63,7 +62,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
         btn = new String[] {"Iced", "Hot", "Tall", "Grande", "Venti"};
         optionList = Arrays.asList(btn);
-        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+        bottomPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
         makeDefaultButton(bottomPanel, btn, false);
         add(bottomPanel, BorderLayout.SOUTH);
 
@@ -147,7 +146,7 @@ public class MainFrame extends JFrame implements ActionListener {
          */
         else if (levelTwoList.contains(command))
         {
-            menuMap = cm.getMenuMap(DTO_PATH + chosenDtoPath + command, PATH + pkgPath + "." + command);
+            Map<String, List<String>> menuMap = cm.getMenuMap(DTO_PATH + chosenDtoPath + command, PATH + pkgPath + "." + command);
 
             levelThrList = menuMap.keySet().stream().toList();
             updatePanel(levelThrList);
@@ -162,17 +161,10 @@ public class MainFrame extends JFrame implements ActionListener {
             String path = System.getProperty("user.dir") + "\\src\\main\\resources\\img\\" + pkgPath.toString().split("\\.")[1] + "\\" + pkgPath.toString().split("\\.")[2] + "\\" + command + ".jpg";
 
             updateMenuPanel(path, menu);
-//            pkgPath.append(".").append(command);
-
+            pkgPath.append(".").append(command);
 
         }
 
-        // 메뉴 선택 시 해당 메뉴의 정보를 가져온다.
-//            default: Map<String, Object> map = cm.getInfoMapFromDynamicClass(PATH + pkgPath + "." + command);
-//                System.out.println(map);
-//        }
-
-        System.out.println("PKG_PATH : " + pkgPath);
     }
 
     /**
@@ -207,7 +199,8 @@ public class MainFrame extends JFrame implements ActionListener {
     }
 
     /**
-     * 
+     * 메뉴 선택 시 해당 메뉴의 이미지와 정보를 가져오는 메서드
+     *
      * @param path : 메뉴의 이미지 주소
      * @param menu : 메뉴의 이름
      */
@@ -216,7 +209,6 @@ public class MainFrame extends JFrame implements ActionListener {
 
         ImageIcon icon = new ImageIcon(path);
         JPanel newPanel = new JPanel()
-
         {
             public void paintComponent(Graphics g)
             {
@@ -231,7 +223,7 @@ public class MainFrame extends JFrame implements ActionListener {
         StringBuilder sb = new StringBuilder();
         for (String key : map.keySet())
         {
-            sb.append("<p> ").append(key).append(" : ").append(map.get(key)).append("</p> <br />");
+            sb.append("<p>").append(key).append(" : ").append(map.get(key)).append("</p><br/>");
         }
 
         JLabel label = new JLabel("<html><body>" + sb + "</body></html>");
@@ -249,6 +241,16 @@ public class MainFrame extends JFrame implements ActionListener {
         // 레이아웃 갱신
         revalidate();  // 레이아웃을 다시 계산
         repaint();     // 화면을 다시 그리기
+        isMenu = true;
+
+        // 메뉴 진입 시 옵션 버튼 활성화
+        for (Component comp : bottomPanel.getComponents())
+        {
+            if (comp instanceof JButton)
+            {
+                comp.setEnabled(true);
+            }
+        }
 
     }
     /**
@@ -272,5 +274,20 @@ public class MainFrame extends JFrame implements ActionListener {
         // 레이아웃 갱신
         revalidate();  // 레이아웃을 다시 계산
         repaint();     // 화면을 다시 그리기
+
+        // 이전 메뉴가 개별 메뉴 정보에 대한 panel 이었을 경우, 옵션값을 초기화하고 옵션 버튼을 비활성화한다.
+        if (isMenu)
+        {
+            isMenu = false;
+            isCold = false;
+            size = 1;
+            for (Component comp : bottomPanel.getComponents())
+            {
+                if (comp instanceof JButton)
+                {
+                    comp.setEnabled(false);
+                }
+            }
+        }
     }
 }

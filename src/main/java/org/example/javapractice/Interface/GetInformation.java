@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public interface GetInformation {
 
-    // global variable area
+    // member variable area
     Logger log = LogManager.getLogger(CommonModule.class);
     Map<String, Object> informationMap = new HashMap<>();
 
