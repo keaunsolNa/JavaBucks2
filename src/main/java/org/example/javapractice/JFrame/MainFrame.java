@@ -19,16 +19,15 @@ import java.util.Stack;
 public class MainFrame extends JFrame implements ActionListener {
 
     // member variable area
-    private static final String PATH = "org.example.javapractice.dto",
-                                DTO_PATH = "src/main/java/org/example/javapractice/dto/";
-    private final StringBuilder pkgPath = new StringBuilder();
+    private final String PATH = "org.example.javapractice.dto";
+    private StringBuilder pkgPath = new StringBuilder();
     private final CommonModule cm = new CommonModule();
     private final Stack<JPanel> prevMenu = new Stack<>();
     private List<String> levelOneList, levelTwoList, levelThrList, optionList;
-    private boolean isCold = false, isMenu = false;
+    private boolean isCold = false, isMenu = false, isOption = false;
     private int size = 1;
     private JPanel mainPanel, bottomPanel;
-    private String chosenDtoPath;
+    private String chosenDtoPath, chosenMenu;
 
     // Constructor
     public MainFrame() {
@@ -105,13 +104,18 @@ public class MainFrame extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         String command = e.getActionCommand();
+        String DTO_PATH = "src/main/java/org/example/javapractice/dto/";
 
         // 뒤로 가기 버튼
         if (command.equals("GoBack"))
         {
             goBackPanel();
+            String temp = pkgPath.substring(pkgPath.lastIndexOf("."), pkgPath.length());
             if (!pkgPath.isEmpty())
+            {
                 pkgPath.delete(pkgPath.lastIndexOf("."), pkgPath.length());
+            }
+            if (pkgPath.toString().split("\\.").length < 3) pkgPath.append(temp);
         }
 
         // Hot, Cold, Size 조정 등 옵션 선택
@@ -120,12 +124,21 @@ public class MainFrame extends JFrame implements ActionListener {
 
             switch (command)
             {
-                case "Cold" : isCold = true; break;
+                case "Iced" : isCold = true; break;
                 case "Hot" : isCold = false; break;
                 case "Tall" : size = 1; break;
                 case "Grande" : size = 2; break;
                 case "Venti" : size = 3; break;
             }
+
+            // 최초 옵션 지정 시에만
+            if (!isOption)
+            {
+                isOption = true;
+                pkgPath =  pkgPath.replace(pkgPath.lastIndexOf("."), pkgPath.length(), "");
+            }
+
+            MakeMenuNameByOption(chosenMenu);
         }
 
         // Drink, Food, Merchandise 버튼 선택 시 해당 메뉴의 하위 메뉴를 가져온다.
@@ -157,10 +170,8 @@ public class MainFrame extends JFrame implements ActionListener {
         else if (levelThrList.contains(command))
         {
 
-            String menu = (size == 1 ? "Tall" : size == 2 ? "Grande" : "Venti") + (isCold ? "Iced" : "") + command;
-            String path = System.getProperty("user.dir") + "\\src\\main\\resources\\img\\" + pkgPath.toString().split("\\.")[1] + "\\" + pkgPath.toString().split("\\.")[2] + "\\" + command + ".jpg";
-
-            updateMenuPanel(path, menu);
+            chosenMenu = command;
+            MakeMenuNameByOption(command);
             pkgPath.append(".").append(command);
 
         }
@@ -168,7 +179,6 @@ public class MainFrame extends JFrame implements ActionListener {
     }
 
     /**
-     *
      * 버튼 선택 시 기존 패널을 제거하고 선택된 버튼의 하위 버튼으로 새로운 패널을 생성한다.
      *
      * @param btnList 생성할 버튼의 리스트
@@ -233,7 +243,10 @@ public class MainFrame extends JFrame implements ActionListener {
         newPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 10)); // 좌측 정렬
 
         // 기존 패널을 제거하고 새 패널로 교체
-        prevMenu.push(mainPanel);               // 이전 프레임 Stack에 저장
+        if (!isMenu)
+        {
+            prevMenu.push(mainPanel);               // 이전 프레임 Stack에 저장
+        }
         getContentPane().remove(mainPanel);     // 메인 패널 remove
         mainPanel = newPanel;                   // 새로운 패널을 메인 패널로 교체
         add(mainPanel, BorderLayout.CENTER);    // 새 패널을 중앙에 추가
@@ -253,6 +266,7 @@ public class MainFrame extends JFrame implements ActionListener {
         }
 
     }
+
     /**
      * 뒤로가기 버튼.
      * 기존 패널을 제거하고 이전의 패널로 교체한다.
@@ -280,6 +294,7 @@ public class MainFrame extends JFrame implements ActionListener {
         {
             isMenu = false;
             isCold = false;
+            isOption = false;
             size = 1;
             for (Component comp : bottomPanel.getComponents())
             {
@@ -289,5 +304,14 @@ public class MainFrame extends JFrame implements ActionListener {
                 }
             }
         }
+    }
+
+    private void MakeMenuNameByOption(String command) {
+
+        System.out.println(pkgPath);
+        String menu = (size == 1 ? "Tall" : size == 2 ? "Grande" : "Venti") + (isCold ? "Iced" : "") + command;
+        String path = System.getProperty("user.dir") + "\\src\\main\\resources\\img\\" + pkgPath.toString().split("\\.")[1] + "\\" + pkgPath.toString().split("\\.")[2] + "\\" + (isCold ? "Iced" : "") + command + ".jpg";
+
+        updateMenuPanel(path, menu);
     }
 }
