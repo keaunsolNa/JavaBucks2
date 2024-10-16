@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * 클래스를 매개변수로 받아 애노테이션으로 정의된 메뉴의 정보를 가져오기 위한 interface
@@ -20,7 +21,7 @@ public interface GetInformation {
 
     // member variable area
     Logger log = LogManager.getLogger(CommonModule.class);
-    Map<String, Object> informationMap = new HashMap<>();
+    Map<String, Object> informationMap = new TreeMap<>();
 
     /**
      *
