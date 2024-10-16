@@ -9,13 +9,14 @@ import java.util.Map;
 @Drink(isCold = true, size = "Venti", ml = 591)
 @NutritionInformation(kcal = 600, sodium = 330, saturatedFattyAcid = 14, sugar = 77, protein = 10, caffeine = 180)
 @Frappuccino
-public class VentiJavaChipFrappuccino implements GetInformation {
+public class VentiJavaChipFrappuccino extends JavaChipFrappuccino {
 
     public VentiJavaChipFrappuccino() {
+        super();
     }
 
-    public Map<String, Object> getInformationMap() {
-        getInformation(VentiJavaChipFrappuccino.class);
-        return informationMap;
+    @Override
+    public void getInformation(Class<?> T) {
+        super.getInformation(VentiJavaChipFrappuccino.class);
     }
 }
