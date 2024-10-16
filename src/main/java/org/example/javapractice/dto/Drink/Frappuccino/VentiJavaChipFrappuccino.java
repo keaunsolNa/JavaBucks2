@@ -1,9 +1,6 @@
 package org.example.javapractice.dto.Drink.Frappuccino;
 
 import org.example.javapractice.Annotation.*;
-import org.example.javapractice.Interface.GetInformation;
-
-import java.util.Map;
 
 @Menu(name = "JavaChipFrappuccino", price = 7300)
 @Drink(isCold = true, size = "Venti", ml = 591)
