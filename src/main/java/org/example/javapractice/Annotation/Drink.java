@@ -8,6 +8,7 @@ import java.lang.annotation.*;
 public @interface Drink {
 
     boolean isCold();
+    boolean icedOnly() default false;
     String size();
     int ml();
 }
