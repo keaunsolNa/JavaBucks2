@@ -6,10 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Stack;
 
 /**
  * MainFrame 을 만들고, 버튼에 대한 Action 을 정의하는 클래스
@@ -20,12 +18,12 @@ public class MainFrame extends JFrame implements ActionListener {
 
     // member variable area
     private final String PATH = "org.example.javapractice.dto";
-    private StringBuilder pkgPath = new StringBuilder();
+    private final String[] pkgPath = new String[3];
+    private final int[] options = new int[] {1, 1, 1, 1, 1, 0};            // Iced/Hot, 개별메뉴여부, 옵션메뉴활성화여부, Size, IceOnly 여부, Short 사이즈 포함 여부
     private final CommonModule cm = new CommonModule();
     private final Stack<JPanel> prevMenu = new Stack<>();
+    private Map<String, List<String>> menuMap;
     private List<String> levelOneList, levelTwoList, levelThrList, optionList;
-    private boolean isCold = false, isMenu = false, isOption = false;
-    private int size = 1;
     private JPanel mainPanel, bottomPanel;
     private String chosenDtoPath, chosenMenu;
 
@@ -39,7 +37,7 @@ public class MainFrame extends JFrame implements ActionListener {
      */
     public void makeMainFrame()
     {
-        setSize(500, 500);
+        setSize(500, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
@@ -59,7 +57,7 @@ public class MainFrame extends JFrame implements ActionListener {
         add(mainPanel, BorderLayout.CENTER);
         levelOneList = Arrays.asList(btn);
 
-        btn = new String[] {"Iced", "Hot", "Tall", "Grande", "Venti"};
+        btn = new String[] {"Iced", "Hot", "Short", "Tall", "Grande", "Venti"};
         optionList = Arrays.asList(btn);
         bottomPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
         makeDefaultButton(bottomPanel, btn, false);
@@ -88,7 +86,7 @@ public class MainFrame extends JFrame implements ActionListener {
             JButton tempBtn = new JButton(str);
             tempBtn.setActionCommand(str);
             tempBtn.addActionListener(this);
-            tempBtn.setEnabled(isEnable);
+            tempBtn.setVisible(isEnable);
 
             panel.add(tempBtn);
         }
@@ -109,13 +107,20 @@ public class MainFrame extends JFrame implements ActionListener {
         // 뒤로 가기 버튼
         if (command.equals("GoBack"))
         {
-            goBackPanel();
-            String temp = pkgPath.substring(pkgPath.lastIndexOf("."), pkgPath.length());
-            if (!pkgPath.isEmpty())
+            // 옵션 메뉴 활성화 된 상태일 경우 별도 처리
+            if (options[2] == 0)
             {
-                pkgPath.delete(pkgPath.lastIndexOf("."), pkgPath.length());
+                String temp = pkgPath[1];
+                goBackPanel();
+                pkgPath[1] = temp;
             }
-            if (pkgPath.toString().split("\\.").length < 3) pkgPath.append(temp);
+            else
+            {
+                goBackPanel();
+                if (pkgPath[2] != null)  pkgPath[2] = null;
+                else if (pkgPath[1] != null) pkgPath[1] = null;
+                else pkgPath[0] = null;
+            }
         }
 
         // Hot, Cold, Size 조정 등 옵션 선택
@@ -124,18 +129,19 @@ public class MainFrame extends JFrame implements ActionListener {
 
             switch (command)
             {
-                case "Iced" : isCold = true; break;
-                case "Hot" : isCold = false; break;
-                case "Tall" : size = 1; break;
-                case "Grande" : size = 2; break;
-                case "Venti" : size = 3; break;
+                case "Iced" : options[0] = 1; break;
+                case "Hot" : options[0] = 0; break;
+                case "Short" : options[3] = 0; break;
+                case "Tall" : options[3] = 1; break;
+                case "Grande" : options[3] = 2; break;
+                case "Venti" : options[3] = 3; break;
             }
 
             // 최초 옵션 지정 시에만
-            if (!isOption)
+            if (options[2] == 1)
             {
-                isOption = true;
-                pkgPath =  pkgPath.replace(pkgPath.lastIndexOf("."), pkgPath.length(), "");
+                options[2] = 0;
+                pkgPath[2] = null;
             }
 
             MakeMenuNameByOption(chosenMenu);
@@ -146,7 +152,7 @@ public class MainFrame extends JFrame implements ActionListener {
         {
             levelTwoList = cm.getPackageNameFromPackage(DTO_PATH + command);
             updatePanel(levelTwoList);
-            pkgPath.append(".").append(command);
+            pkgPath[0] = command;
             chosenDtoPath = command + "/";
 
         }
@@ -159,23 +165,23 @@ public class MainFrame extends JFrame implements ActionListener {
          */
         else if (levelTwoList.contains(command))
         {
-            Map<String, List<String>> menuMap = cm.getMenuMap(DTO_PATH + chosenDtoPath + command, PATH + pkgPath + "." + command);
-
+            menuMap = cm.getMenuMap(DTO_PATH + chosenDtoPath + command, PATH + makeArrPkgPathToStringPath() + "." + command);
             levelThrList = menuMap.keySet().stream().toList();
             updatePanel(levelThrList);
-            pkgPath.append(".").append(command);
+            pkgPath[1] = command;
         }
 
         // 개별 매뉴 선택 시 들어오는 이벤트
         else if (levelThrList.contains(command))
         {
 
+            if (menuMap.get(command).get(1).contains("Short")) options[5] = 0;
+            else options[5] = 1;
+
             chosenMenu = command;
             MakeMenuNameByOption(command);
-            pkgPath.append(".").append(command);
-
+            pkgPath[2] = command;
         }
-
     }
 
     /**
@@ -216,7 +222,6 @@ public class MainFrame extends JFrame implements ActionListener {
      */
     private void updateMenuPanel(String path, String menu)
     {
-
         ImageIcon icon = new ImageIcon(path);
         JPanel newPanel = new JPanel()
         {
@@ -228,12 +233,20 @@ public class MainFrame extends JFrame implements ActionListener {
             }
         };
 
-        Map<String, Object> map = cm.getInfoMapFromDynamicClass(PATH + pkgPath + "." + menu);
-
+        Map<String, Object> map = cm.getInfoMapFromDynamicClass(PATH + makeArrPkgPathToStringPath() + "." + menu);
         StringBuilder sb = new StringBuilder();
+
         for (String key : map.keySet())
         {
-            sb.append("<p>").append(key).append(" : ").append(map.get(key)).append("</p><br/>");
+            if (key.equals("icedOnly") && (boolean) map.get(key))
+            {
+                options[4] = 0;
+            }
+
+            else
+            {
+                sb.append("<p>").append(key).append(" : ").append(map.get(key)).append("</p><br/>");
+            }
         }
 
         JLabel label = new JLabel("<html><body>" + sb + "</body></html>");
@@ -243,9 +256,9 @@ public class MainFrame extends JFrame implements ActionListener {
         newPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 10)); // 좌측 정렬
 
         // 기존 패널을 제거하고 새 패널로 교체
-        if (!isMenu)
+        if (options[1] == 1)
         {
-            prevMenu.push(mainPanel);               // 이전 프레임 Stack에 저장
+            prevMenu.push(mainPanel);           // 이전 프레임 Stack에 저장
         }
         getContentPane().remove(mainPanel);     // 메인 패널 remove
         mainPanel = newPanel;                   // 새로운 패널을 메인 패널로 교체
@@ -254,17 +267,41 @@ public class MainFrame extends JFrame implements ActionListener {
         // 레이아웃 갱신
         revalidate();  // 레이아웃을 다시 계산
         repaint();     // 화면을 다시 그리기
-        isMenu = true;
+        options[1] = 0;
 
         // 메뉴 진입 시 옵션 버튼 활성화
         for (Component comp : bottomPanel.getComponents())
         {
-            if (comp instanceof JButton)
+            if (comp instanceof JButton btn)
             {
-                comp.setEnabled(true);
+                if (options[4] == 0 && (btn.getActionCommand().equals("Hot") || btn.getActionCommand().equals("Iced"))) continue;
+
+                comp.setVisible(true);
+
+                if (options[5] != 0 && btn.getActionCommand().equals("Short")) btn.setVisible(false);
+                if (options[5] == 0 && btn.getActionCommand().equals("Venti")) btn.setVisible(false);
             }
         }
 
+    }
+
+    /**
+     * 
+     * 뒤로 가기, 옵션 등 버튼 선택 시 변화하는 패키지 경로 대응하기 위해 경로 배열 형태로 설정
+     * 배열 형태의 경로를 스트링 형태로 반환
+     * 이 때 아직 들어가지 않은 루트의 경로는 무시
+     *
+     * @return pkgPath : 패키지 경로
+     */
+    private String makeArrPkgPathToStringPath()
+    {
+        StringBuilder sb = new StringBuilder();
+        for (String str : pkgPath)
+        {
+            if (str == null) break;
+            sb.append(".").append(str);
+        }
+        return sb.toString();
     }
 
     /**
@@ -290,17 +327,16 @@ public class MainFrame extends JFrame implements ActionListener {
         repaint();     // 화면을 다시 그리기
 
         // 이전 메뉴가 개별 메뉴 정보에 대한 panel 이었을 경우, 옵션값을 초기화하고 옵션 버튼을 비활성화한다.
-        if (isMenu)
+        if (options[1] == 0)
         {
-            isMenu = false;
-            isCold = false;
-            isOption = false;
-            size = 1;
+
+            Arrays.fill(options, 1);
+
             for (Component comp : bottomPanel.getComponents())
             {
                 if (comp instanceof JButton)
                 {
-                    comp.setEnabled(false);
+                    comp.setVisible(false);
                 }
             }
         }
@@ -308,9 +344,8 @@ public class MainFrame extends JFrame implements ActionListener {
 
     private void MakeMenuNameByOption(String command) {
 
-        System.out.println(pkgPath);
-        String menu = (size == 1 ? "Tall" : size == 2 ? "Grande" : "Venti") + (isCold ? "Iced" : "") + command;
-        String path = System.getProperty("user.dir") + "\\src\\main\\resources\\img\\" + pkgPath.toString().split("\\.")[1] + "\\" + pkgPath.toString().split("\\.")[2] + "\\" + (isCold ? "Iced" : "") + command + ".jpg";
+        String menu = (options[3] == 0 ? "Short" : options[3] == 1 ? "Tall" : options[3] == 2 ? "Grande" : "Venti") + (options[0] == 1 ? "Iced" : "") + command;
+        String path = System.getProperty("user.dir") + "\\src\\main\\resources\\img\\" + makeArrPkgPathToStringPath().split("\\.")[1] + "\\" + makeArrPkgPathToStringPath().split("\\.")[2] + "\\" + (options[0] == 1 ? "Iced" : "") + command + ".jpg";
 
         updateMenuPanel(path, menu);
     }
