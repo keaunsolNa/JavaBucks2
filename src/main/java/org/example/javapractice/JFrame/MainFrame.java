@@ -342,10 +342,14 @@ public class MainFrame extends JFrame implements ActionListener {
         }
     }
 
-    private void MakeMenuNameByOption(String command) {
+    /**
+     * 옵션 (Iced, Hot. Size) 을 붙인 형태로 메뉴 이름을 만들고, 해당 메뉴의 리소스(Img) 위치를 반환한다.
+     * @param menuName : 메뉴 이름
+     */
+    private void MakeMenuNameByOption(String menuName) {
 
-        String menu = (options[3] == 0 ? "Short" : options[3] == 1 ? "Tall" : options[3] == 2 ? "Grande" : "Venti") + (options[0] == 1 ? "Iced" : "") + command;
-        String path = System.getProperty("user.dir") + "\\src\\main\\resources\\img\\" + makeArrPkgPathToStringPath().split("\\.")[1] + "\\" + makeArrPkgPathToStringPath().split("\\.")[2] + "\\" + (options[0] == 1 ? "Iced" : "") + command + ".jpg";
+        String menu = (options[3] == 0 ? "Short" : options[3] == 1 ? "Tall" : options[3] == 2 ? "Grande" : "Venti") + (options[0] == 1 ? "Iced" : "") + menuName;
+        String path = System.getProperty("user.dir") + "\\src\\main\\resources\\img\\" + makeArrPkgPathToStringPath().split("\\.")[1] + "\\" + makeArrPkgPathToStringPath().split("\\.")[2] + "\\" + (options[0] == 1 ? "Iced" : "") + menuName + ".jpg";
 
         updateMenuPanel(path, menu);
     }
