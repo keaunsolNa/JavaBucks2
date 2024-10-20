@@ -170,4 +170,60 @@ public class CommonModule {
 
     }
 
+    public StringBuilder makeStringBuilderByInformationMap(Map<String, Object> map, String Language, int[] options)
+    {
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("<html>").append("<br/>");
+        stringBuilder.append("<body>").append("<br/>");
+
+        for (String key : map.keySet())
+        {
+            switch (key)
+            {
+                case "Type" :
+                    stringBuilder.append("<p style=\"font-size:24px; color:red;\">");
+                    stringBuilder.append(map.get(key).toString());
+                    stringBuilder.append("</p>").append("<br/>");
+                    break;
+
+
+                case "name" :
+                    stringBuilder.append("<p style=\"font-size:18px; color:black;\">");
+                    stringBuilder.append(map.get(key).toString());
+                    stringBuilder.append("</p>").append("<br/>");
+                    break;
+
+                case "icedOnly" :
+
+                    options[4] = (boolean) map.get(key) ? 0 : 1;
+                    break;
+
+                default:
+                    stringBuilder.append("<p style=\"font-size:10px; color:black;\">");
+                    stringBuilder.append("<p>").append(Language.equals("KO") ? translateKeyKo(key) : key).append(" : ");
+                    stringBuilder.append(map.get(key).toString());
+                    stringBuilder.append("</p>").append("<br/>");
+            }
+        }
+
+        stringBuilder.append("</html>").append("<br/>");
+        stringBuilder.append("</body>").append("<br/>");
+
+        return stringBuilder;
+    }
+
+    private String translateKeyKo (String key)
+    {
+
+        return switch (key) {
+            case "kcal" -> "칼로리";
+            case "sodium" -> "나트륨";
+            case "saturatedFattyAcid" -> "포화지방";
+            case "sugar" -> "당류";
+            case "protein" -> "단백질";
+            case "caffeine" -> "카페인";
+            default -> key;
+        };
+    }
 }
