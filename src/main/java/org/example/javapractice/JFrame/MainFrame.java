@@ -234,23 +234,10 @@ public class MainFrame extends JFrame implements ActionListener {
         };
 
         Map<String, Object> map = cm.getInfoMapFromDynamicClass(PATH + makeArrPkgPathToStringPath() + "." + menu);
-        StringBuilder sb = new StringBuilder();
+;
+        StringBuilder sb = cm.makeStringBuilderByInformationMap(map, "KO", options);
 
-        for (String key : map.keySet())
-        {
-            if (key.equals("icedOnly") && (boolean) map.get(key))
-            {
-                options[4] = 0;
-            }
-
-            else
-            {
-                sb.append("<p>").append(key).append(" : ").append(map.get(key)).append("</p><br/>");
-            }
-        }
-
-        JLabel label = new JLabel("<html><body>" + sb + "</body></html>");
-
+        JLabel label = new JLabel(sb.toString());
         newPanel.add(label, BorderLayout.EAST);
         newPanel.doLayout();
         newPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 10)); // 좌측 정렬
