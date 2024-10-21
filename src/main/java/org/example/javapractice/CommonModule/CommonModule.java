@@ -176,7 +176,6 @@ public class CommonModule {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("<html>").append("<br/>");
         stringBuilder.append("<body>").append("<br/>");
-
         for (String key : map.keySet())
         {
             switch (key)
@@ -199,6 +198,10 @@ public class CommonModule {
                     options[4] = (boolean) map.get(key) ? 0 : 1;
                     break;
 
+                case "isCold" :
+                case "size" :
+                    break;
+
                 default:
                     stringBuilder.append("<p style=\"font-size:10px; color:black;\">");
                     stringBuilder.append("<p>").append(Language.equals("KO") ? translateKeyKo(key) : key).append(" : ");
@@ -207,8 +210,8 @@ public class CommonModule {
             }
         }
 
-        stringBuilder.append("</html>").append("<br/>");
         stringBuilder.append("</body>").append("<br/>");
+        stringBuilder.append("</html>").append("<br/>");
 
         return stringBuilder;
     }

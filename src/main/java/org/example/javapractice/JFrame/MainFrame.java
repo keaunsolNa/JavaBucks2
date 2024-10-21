@@ -22,6 +22,7 @@ public class MainFrame extends JFrame implements ActionListener {
     private final int[] options = new int[] {1, 1, 1, 1, 1, 0};            // Iced/Hot, 개별메뉴여부, 옵션메뉴활성화여부, Size, IceOnly 여부, Short 사이즈 포함 여부
     private final CommonModule cm = new CommonModule();
     private final Stack<JPanel> prevMenu = new Stack<>();
+    private String LANGUAGE = "KO";
     private Map<String, List<String>> menuMap;
     private List<String> levelOneList, levelTwoList, levelThrList, optionList;
     private JPanel mainPanel, bottomPanel;
@@ -37,7 +38,8 @@ public class MainFrame extends JFrame implements ActionListener {
      */
     public void makeMainFrame()
     {
-        setSize(500, 600);
+        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+        setSize(dimension.width, dimension.height - 100);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
@@ -57,7 +59,7 @@ public class MainFrame extends JFrame implements ActionListener {
         add(mainPanel, BorderLayout.CENTER);
         levelOneList = Arrays.asList(btn);
 
-        btn = new String[] {"Iced", "Hot", "Short", "Tall", "Grande", "Venti"};
+        btn = new String[] {"EN", "Iced", "Hot", "Short", "Tall", "Grande", "Venti"};
         optionList = Arrays.asList(btn);
         bottomPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
         makeDefaultButton(bottomPanel, btn, false);
@@ -129,6 +131,11 @@ public class MainFrame extends JFrame implements ActionListener {
 
             switch (command)
             {
+                case "EN" :
+                case "KO" :
+                    LANGUAGE = LANGUAGE.equals("KO") ? "EN" : "KO";
+                    break;
+
                 case "Iced" : options[0] = 1; break;
                 case "Hot" : options[0] = 0; break;
                 case "Short" : options[3] = 0; break;
@@ -227,7 +234,7 @@ public class MainFrame extends JFrame implements ActionListener {
         {
             public void paintComponent(Graphics g)
             {
-                g.drawImage(icon.getImage(), 0, 0, null);
+                g.drawImage(icon.getImage(), 0, 0, getWidth() / 3, getHeight(), this);
                 setOpaque(false);
                 super.paintComponent(g);
             }
@@ -235,7 +242,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
         Map<String, Object> map = cm.getInfoMapFromDynamicClass(PATH + makeArrPkgPathToStringPath() + "." + menu);
 ;
-        StringBuilder sb = cm.makeStringBuilderByInformationMap(map, "KO", options);
+        StringBuilder sb = cm.makeStringBuilderByInformationMap(map, LANGUAGE, options);
 
         JLabel label = new JLabel(sb.toString());
         newPanel.add(label, BorderLayout.EAST);
